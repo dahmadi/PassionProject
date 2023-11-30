@@ -1,17 +1,15 @@
-import React from 'react';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import LoginPage from './components/LoginPage'; // Adjust the path based on your project structure
-import WrappedPage from './components/WrappedPage'; // Adjust the path based on your project structure
+import React from "react";
+import { Route, Switch } from "react-router-dom";
+import LoginPage from "./components/LoginPage";
+import WrappedPage from "./components/WrappedPage";
 
 function App() {
-  return (
-    <Router>
-      <Switch>
-        <Route path="/" exact component={LoginPage} />
-        <Route path="/wrappedPage" component={WrappedPage} />
-      </Switch>
-    </Router>
-  );
+    return (
+        <Switch>
+            <Route path="/" exact component={LoginPage} />
+            <Route path="/wrapped" exact component={WrappedPage} />
+        </Switch>
+    );
 }
 
 export default App;

@@ -18,9 +18,9 @@ class App extends React.Component {
 
         let redirect_uri = "";
         if (process.env.NODE_ENV === 'production') {
-            redirect_uri = 'http://localhost:3000';
+            redirect_uri = 'http://localhost:3000/wrapped';
         } else {
-            redirect_uri = 'http://localhost:3000';
+            redirect_uri = 'http://localhost:3000/wrapped';
         }
 
         this.state = {
