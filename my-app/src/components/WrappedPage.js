@@ -20,6 +20,7 @@ class Callback extends React.Component {
         super(props)
 
         var params = getHashParams();
+        console.log('Access Token:', params.access_token);
         this.state = {
             access_token: params.access_token,
             top_artists: [],
@@ -296,19 +297,23 @@ class Callback extends React.Component {
     }
     redirectToHome() {
         if (process.env.NODE_ENV === "production") {
-            window.location = "https://wrappedwhenever.com/"
+            window.location = "http://localhost:3000"
         } else {
             window.location = "http://localhost:3000"
         }
     }
     render() {
-        const data = this.state.data[this.state.termCount % 3]
-        const Genres = Array.from(data.genres.keys()).slice(0, 5).map((genre, i) => {
+        const data = this.state.data[this.state.termCount % 3];
+        const Genres = Array.from(data.genres.keys())
+          .slice(0, 5)
+          .map((genre, i) => {
             return (
-                <p key={i} className="d-sm-block text-truncate" ><b>{i + 1}</b>&nbsp;&nbsp;{genre}</p>
-            )
-        })
-
+              <p key={i} className="d-sm-block text-truncate">
+                <b>{i + 1}</b>&nbsp;&nbsp;{genre}
+              </p>
+            );
+          });
+      
         const TrackList = data.tracks.slice(0, 20).map((track, i) => {
             let artists = ""
             track.artists.forEach((artist, i) => {
