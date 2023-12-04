@@ -1,89 +1,88 @@
-import React from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import { Container, Button } from 'react-bootstrap';
+import React, { useState, useEffect } from "react";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 function generateRandomString(length) {
-    var text = '';
-    var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+	let text = "";
+	const possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
-    for (var i = 0; i < length; i++) {
-        text += possible.charAt(Math.floor(Math.random() * possible.length));
-    }
-    return text;
+	for (let i = 0; i < length; i++) {
+		text += possible.charAt(Math.floor(Math.random() * possible.length));
+	}
+	return text;
 }
 
-class App extends React.Component {
-    constructor(props) {
-        super(props);
+// Define constants outside the component
+const CLIENT_ID = "3496780736d74344a32f33454638b00a";
+const REDIRECT_URI =
+	process.env.NODE_ENV === "production" ? "http://localhost:3000/wrapped" : "http://localhost:3000/wrapped";
+const SCOPE =
+	"user-top-read playlist-modify-public playlist-modify-private playlist-read-private playlist-read-collaborative";
 
-        let redirect_uri = "";
-        if (process.env.NODE_ENV === 'production') {
-            redirect_uri = 'http://localhost:3000/wrapped';
-        } else {
-            redirect_uri = 'http://localhost:3000/wrapped';
-        }
+const LoginPage = () => {
+	const [authState, setAuthState] = useState(generateRandomString(16));
 
-        this.state = {
-            client_id: "7501f8c6a720443b86aea58eb87b9749",
-            redirect_uri: redirect_uri,
-            scope: "user-top-read playlist-modify-public playlist-modify-private playlist-read-private playlist-read-collaborative",
-            state: generateRandomString(16),
-            access_token: null  // New state to store the access token
-        };
+	const handleAuthClick = (event) => {
+		event.preventDefault();
+		const url = new URL("https://accounts.spotify.com/authorize");
+		url.searchParams.append("response_type", "token");
+		url.searchParams.append("client_id", CLIENT_ID);
+		url.searchParams.append("scope", SCOPE);
+		url.searchParams.append("redirect_uri", REDIRECT_URI);
+		url.searchParams.append("state", authState);
 
-        this.handleAuthClick = this.handleAuthClick.bind(this);
-    }
+		window.location = url.toString();
+	};
 
-    componentDidMount() {
-        const body = document.querySelector("body");
-        body.style.background = "#181818";
+	return (
+		<div>
+			<div
+				className=" text-center"
+				style={{
+					color: "white",
+					background: "linear-gradient(135deg, #1DB954 0%, #1E3264 100%)",
+					padding: "60px 20px",
+					borderRadius: "15px",
+					margin: "50px",
+					boxShadow: "0 4px 8px 0 rgba(0,0,0,0.2)",
+				}}
+			>
+				<p className="header-small" style={{ fontSize: "2em", fontWeight: "bold", marginBottom: "10px" }}>
+					Your Year in Music
+				</p>
+				<h1 className="header" style={{ fontSize: "3.5em", fontWeight: "800", letterSpacing: "1px" }}>
+					Spotify Wrapped
+				</h1>
+				<p style={{ fontSize: "1.25em", marginTop: "20px", maxWidth: "600px", margin: "20px auto" }}>
+					Dive into your top songs, artists, and genres from the past year and share your musical journey with
+					friends.
+				</p>
+			</div>
+			<div className="align-items-center" style={{ position: "absolute", width: "100%", textAlign: "center" }}>
+				<button
+					onClick={handleAuthClick}
+					className="btn"
+					style={{
+						background: "#1DB954",
+						color: "white",
+						padding: "15px 30px",
+						fontSize: "1.2em",
+						borderRadius: "25px",
+						border: "none",
+						transition: "background-color 0.3s, transform 0.3s",
+						boxShadow: "0 2px 4px 0 rgba(0,0,0,0.3)",
+					}}
+				>
+					Log in with Spotify
+				</button>
+				<p style={{ color: "gray", marginTop: "20px", fontSize: "1em" }}>
+					Not a Spotify user yet?{" "}
+					<a href="https://www.spotify.com/us/signup/" style={{ color: "#1DB954", textDecoration: "none" }}>
+						Sign up here
+					</a>
+				</p>
+			</div>
+		</div>
+	);
+};
 
-        // Check for access token in URL hash
-        var params = this.getHashParams();
-        if (params.access_token) {
-            this.setState({ access_token: params.access_token });
-        }
-    }
-
-    handleAuthClick(event) {
-        const url = 'https://accounts.spotify.com/authorize';
-        const params = new URLSearchParams({
-            response_type: 'token',
-            client_id: "7501f8c6a720443b86aea58eb87b9749",
-            scope: this.state.scope,
-            redirect_uri: this.state.redirect_uri,
-            state: this.state.state,
-        });
-
-        const authUrl = `${url}?${params.toString()}`;
-        window.location.href = authUrl;
-
-        event.preventDefault();
-    }
-
-    getHashParams() {
-        var hashParams = {};
-        var e, r = /([^&;=]+)=?([^&;]*)/g, q = window.location.hash.substring(1);
-        while ((e = r.exec(q)) !== null) {
-            hashParams[e[1]] = decodeURIComponent(e[2]);
-        }
-        return hashParams;
-    }
-
-    render() {
-        return (
-            <div>
-                <div className="header-container text-center" style={{ color: 'white' }}>
-                    <p className="header-small">YOUR</p>
-                    <h1 className="header">Spotify,<br />Wrapped</h1>
-                </div>
-
-                <div className="d-flex flex-column align-items-center fixed-bottom" style={{ marginBottom: '200px' }}>
-                    <button onClick={this.handleAuthClick} className="btn btn-primary">Login with Spotify</button>
-                </div>
-            </div>
-        );
-    }
-}
-
-export default App;
+export default LoginPage;
